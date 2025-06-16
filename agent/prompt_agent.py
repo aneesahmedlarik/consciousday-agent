@@ -1,16 +1,20 @@
+import streamlit as st
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-import streamlit as st
 
-# Load OpenRouter API key securely from Streamlit secrets
+# ✅ Load API key securely from Streamlit Secrets
+api_key = st.secrets["OPENAI_API_KEY"]
+
+# ✅ Define LLM with OpenRouter settings
 llm = ChatOpenAI(
-    openai_api_key=st.secrets["OPENAI_API_KEY"],
-    temperature=0.7,
+    openai_api_key=api_key,
     base_url="https://openrouter.ai/api/v1",
-    model="meta-llama/llama-3-8b-instruct"
+    model="meta-llama/llama-3-8b-instruct",
+    temperature=0.7
 )
 
+# ✅ Prompt template to guide the reflection agent
 prompt_template = """
 You are a daily reflection and planning assistant. Your goal is to:
 1. Reflect on the user's journal and dream input
@@ -31,8 +35,13 @@ OUTPUT:
 4. Suggested Day Strategy (time-aligned tasks)
 """
 
-chain = LLMChain(llm=llm, prompt=PromptTemplate.from_template(prompt_template))
+# ✅ Combine LLM and prompt into a LangChain Chain
+chain = LLMChain(
+    llm=llm,
+    prompt=PromptTemplate.from_template(prompt_template)
+)
 
+# ✅ Function to run the reflection agent
 def generate_reflection(journal, dream, intention, priorities):
     try:
         return chain.run({
@@ -42,5 +51,5 @@ def generate_reflection(journal, dream, intention, priorities):
             "priorities": priorities
         })
     except Exception as e:
-        st.error(f"LLM error: {e}")
+        st.error(f"❌ LLM error: {e}")
         return None
