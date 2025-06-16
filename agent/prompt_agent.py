@@ -3,8 +3,9 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 import streamlit as st
 
+# Load OpenRouter API key securely from Streamlit secrets
 llm = ChatOpenAI(
-    openai_api_key="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",  # Use your real key
+    openai_api_key=st.secrets["OPENAI_API_KEY"],
     temperature=0.7,
     base_url="https://openrouter.ai/api/v1",
     model="meta-llama/llama-3-8b-instruct"
