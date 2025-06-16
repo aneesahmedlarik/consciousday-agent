@@ -1,0 +1,16 @@
+# Ignore virtual environments
+venv/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore environment variables
+.env
+.env.*
+
+# Ignore local SQLite DB
+*.db
+
+# Ignore Streamlit generated folders
+.streamlit/
