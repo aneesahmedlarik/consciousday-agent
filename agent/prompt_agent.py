@@ -1,19 +1,14 @@
-import streamlit as st
-import os
-from langchain_google_genai import ChatGoogleGenerativeAI   
-from langchain.prompts import PromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+import streamlit as st
 
-# ✅ Set Google Gemini API Key
-os.environ["GOOGLE_API_KEY"] = "AIzaSyA-d4_-4CtqFDWWhukNYI03zBte289n7dE"
-
-# ✅ Gemini Model Initialization
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+    google_api_key=st.secrets["GOOGLE_API_KEY"],  # or hardcoded just for local
+    model="gemini-pro",
     temperature=0.7
 )
 
-# ✅ Prompt Template
 prompt_template = """
 You are a daily reflection and planning assistant. Your goal is to:
 1. Reflect on the user's journal and dream input
@@ -34,13 +29,8 @@ OUTPUT:
 4. Suggested Day Strategy (time-aligned tasks)
 """
 
-# ✅ Create the LLM Chain
-chain = LLMChain(
-    llm=llm,
-    prompt=PromptTemplate.from_template(prompt_template)
-)
+chain = LLMChain(llm=llm, prompt=PromptTemplate.from_template(prompt_template))
 
-# ✅ Define generation function
 def generate_reflection(journal, dream, intention, priorities):
     try:
         return chain.run({
