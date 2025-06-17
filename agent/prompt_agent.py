@@ -1,24 +1,19 @@
 import streamlit as st
-from langchain.chat_models.openai import ChatOpenAI
-from langchain.schema.messages import HumanMessage
+import os
+from langchain_google_genai import ChatGoogleGenerativeAI   
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from langchain.chat_models.base import BaseChatModel
-import os
 
-from langchain_core.runnables import Runnable
+# ✅ Set Google Gemini API Key
+os.environ["GOOGLE_API_KEY"] = "AIzaSyA-d4_-4CtqFDWWhukNYI03zBte289n7dE"
 
-from langchain_core.language_models.chat_models import SimpleChatModel
-
-# ✅ Force OpenRouter API to authenticate via headers using environment var
-os.environ["OPENAI_API_KEY"] = "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"
-os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
-
-llm = ChatOpenAI(
-    model="meta-llama/llama-3-8b-instruct",
+# ✅ Gemini Model Initialization
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash",
     temperature=0.7
 )
 
+# ✅ Prompt Template
 prompt_template = """
 You are a daily reflection and planning assistant. Your goal is to:
 1. Reflect on the user's journal and dream input
@@ -39,11 +34,13 @@ OUTPUT:
 4. Suggested Day Strategy (time-aligned tasks)
 """
 
+# ✅ Create the LLM Chain
 chain = LLMChain(
     llm=llm,
     prompt=PromptTemplate.from_template(prompt_template)
 )
 
+# ✅ Define generation function
 def generate_reflection(journal, dream, intention, priorities):
     try:
         return chain.run({
